@@ -10,6 +10,7 @@ const uploadRouter = require("./routes/uploadRoutes.js");
 const videoRouter = require("./routes/videoRoutes.js");
 const projectRouter = require("./routes/projectRoutes.js")
 const logRouter = require("./routes/logRoutes.js")
+const urlRouter = require("./routes/urlshortner.js")
 
 const { PORT } = require("./config/keys");
 
@@ -50,6 +51,10 @@ app.use('/api/upload', uploadRouter);
 app.use('/api/videos', videoRouter);
 app.use('/api/project',projectRouter);
 app.use('/api/userlogs',logRouter);
+app.use('/api/urlshortner',urlRouter);
+app.use('/',urlRouter);
+
+
 
 app.get("/", (req, res) => {
   res.json("Hello, world!");

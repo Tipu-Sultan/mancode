@@ -2,11 +2,9 @@ const Log = require("../models/info");
 
 
 async function saveUserLogs(req, res) {
-    console.log(req.headers);
 
     try {
         const ip = req.ip;
-        console.log(ip);
         const deviceInfo = req.headers['user-agent']; 
         const browser = req.headers['user-agent']; 
         const timing = new Date();
