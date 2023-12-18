@@ -1,8 +1,10 @@
 const express = require("express");
-const { getUsersLogs, deleteUserLog } = require("../controller/logs");
+const { getUsersLogs, deleteUserLog, saveUserLogs } = require("../controller/logs");
 const router = express.Router();
 // API endpoint to get user logs
-router.get('/', getUsersLogs)
+router.route('/')
+.get(getUsersLogs)
+.post(saveUserLogs)
 router.delete('/:logId', deleteUserLog);
 
 

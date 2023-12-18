@@ -1,5 +1,34 @@
 const Log = require("../models/info");
 
+
+async function saveUserLogs(req, res) {
+    console.log(req.headers);
+
+    try {
+        const ip = req.ip;
+        console.log(ip);
+        const deviceInfo = req.headers['user-agent']; 
+        const browser = req.headers['user-agent']; 
+        const timing = new Date();
+
+        const existingLog = await Log.findOne({ ip });
+
+        if (existingLog) {
+            existingLog.timing = timing;
+            await existingLog.save();
+            res.status(200).json({ message: 'Log updated successfully' });
+        } else {
+            const logEntry = new Log({ ip, deviceInfo, timing, browser });
+            await logEntry.save();
+            res.status(201).json({ message: 'Log saved successfully' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+
 async function getUsersLogs(req, res) {
     try {
         const userLogs = await Log.find();
@@ -29,5 +58,6 @@ async function deleteUserLog(req, res) {
 
 module.exports = {
     getUsersLogs,
-    deleteUserLog
+    deleteUserLog,
+    saveUserLogs
 }
