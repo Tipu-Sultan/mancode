@@ -13,7 +13,7 @@ async function postUrlShortner(req, res) {
         if (existingUrl) {
             // Generate a new short ID using shortid
             const newShortUrl = shortid.generate();
-            const actualUrl = `${HOST}` + newShortUrl;
+            const actualUrl = `${HOST}/` + newShortUrl;
 
             // Update the existing document with the new shortUrl
             existingUrl.shortUrl = newShortUrl;
@@ -23,7 +23,7 @@ async function postUrlShortner(req, res) {
         } else {
             // If the originalUrl doesn't exist, create a new entry
             const shortUrl = shortid.generate();
-            const actualUrl = `${HOST}` + shortUrl;
+            const actualUrl = `${HOST}/` + shortUrl;
 
             // Create a new URL entry in the database
             const newUrl = new URL({ originalUrl, shortUrl });
