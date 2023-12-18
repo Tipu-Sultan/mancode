@@ -51,7 +51,7 @@ app.use('/api/videos', videoRouter);
 app.use('/api/project',projectRouter);
 app.use('/api/userlogs',logRouter);
 
-app.post("/", (req, res) => {
+app.get("/", (req, res) => {
   res.json("Hello, world!");
 });
 
