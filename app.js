@@ -3,6 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
+const requestIp = require('request-ip');
+const app = express();
 
 const authRouter = require("./routes/authRoutes.js");
 const codeRouter = require("./routes/codeRoutes.js");
@@ -16,17 +18,18 @@ const { PORT } = require("./config/keys");
 
 //call mongoDB
 const main = require("./models/db");
+const Log = require("./models/info.js");
 main()
   .then()
   .catch((err) => console.log(err));
 
 // Middleware
+app.use(requestIp.mw());
 const corsOptions = {
   origin: "*", // Allow only this origin
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // Allow credentials (e.g., cookies)
 };
-const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
 
@@ -44,15 +47,39 @@ var io = require("socket.io")(server, {
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //call the all restful APIs
+app.post('/api/userlogs', async (req, res) => {
 
-app.use('/api/auth',authRouter);
+  try {
+    const ip = req.clientIp;
+    const deviceInfo = req.headers['user-agent'];
+    const browser = req.headers['user-agent'];
+    const timing = new Date();
+
+    const existingLog = await Log.findOne({ ip });
+
+    if (existingLog) {
+      existingLog.timing = timing;
+      await existingLog.save();
+      res.status(200).json({ message: 'Log updated successfully' });
+    } else {
+      const logEntry = new Log({ ip, deviceInfo, timing, browser });
+      await logEntry.save();
+      res.status(201).json({ message: 'Log saved successfully' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+})
+
+app.use('/api/auth', authRouter);
 app.use('/api/codeblocks', codeRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/videos', videoRouter);
-app.use('/api/project',projectRouter);
-app.use('/api/userlogs',logRouter);
-app.use('/api/urlshortner',urlRouter);
-app.use('/',urlRouter);
+app.use('/api/project', projectRouter);
+app.use('/api/urlshortner', urlRouter);
+app.use('/api/userlogs', logRouter);
+app.use('/', urlRouter);
 
 
 

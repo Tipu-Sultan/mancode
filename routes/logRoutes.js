@@ -4,7 +4,6 @@ const router = express.Router();
 // API endpoint to get user logs
 router.route('/')
 .get(getUsersLogs)
-.post(saveUserLogs)
 router.delete('/:logId', deleteUserLog);
 
 
