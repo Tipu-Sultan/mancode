@@ -8,19 +8,19 @@ app.use(requestIp.mw());
 async function saveUserLogs(req, res) {
 
     try {
-        const clientIp = req.clientIp;
+        const ip = req.clientIp;
         const deviceInfo = req.headers['user-agent'];
         const browser = req.headers['user-agent'];
         const timing = new Date();
 
-        const existingLog = await Log.findOne({ clientIp });
+        const existingLog = await Log.findOne({ ip });
 
         if (existingLog) {
             existingLog.timing = timing;
             await existingLog.save();
             res.status(200).json({ message: 'Log updated successfully' });
         } else {
-            const logEntry = new Log({ clientIp, deviceInfo, timing, browser });
+            const logEntry = new Log({ ip, deviceInfo, timing, browser });
             await logEntry.save();
             res.status(201).json({ message: 'Log saved successfully' });
         }
