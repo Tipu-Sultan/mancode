@@ -1,11 +1,11 @@
 const Project = require("../models/project");
 
 async function addNewProject(req, res) {
-    const { project_name, link, banner, tools } = req.body;
+    const { project_name, hostedUrl,githubUrl, banner, tools } = req.body;
 
     try {
         // Add a new project
-        const newProject = new Project({ project_name, link, banner, tools });
+        const newProject = new Project({ project_name, hostedUrl, githubUrl,banner, tools });
         await newProject.save();
 
         return res.status(200).json({ message: 'Project added successfully', newProject });
@@ -44,13 +44,13 @@ async function getAllProjects(req, res) {
 
 async function updateExistProject(req, res) {
     const { id } = req.params;
-    const { project_name, link, banner, tools } = req.body;
+    const { project_name, hostedUrl,githubUrl, banner, tools } = req.body;
 
     try {
         // Update existing project
         const updatedProject = await Project.findByIdAndUpdate(
             id,
-            { project_name, link, banner, tools },
+            { project_name, hostedUrl, githubUrl,banner, tools },
             { new: true } // Set to true to return the updated project
         );
 
