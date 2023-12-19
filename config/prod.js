@@ -5,6 +5,6 @@ module.exports = {
     EMAIL_PASS : process.env.EMAIL_PASS,
     accountSid : process.env.accountSid,
     authToken : process.env.authToken,
-    HOST:"https://themancode-in.vercel.app",
+    HOST:"https://themancode.vercel.app",
     PORT: process.env.PORT
 }
