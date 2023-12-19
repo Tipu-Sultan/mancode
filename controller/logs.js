@@ -4,9 +4,10 @@ const Log = require("../models/info");
 async function saveUserLogs(req, res) {
 
     try {
-        const ip = req.ip;
-        const deviceInfo = req.headers['user-agent']; 
-        const browser = req.headers['user-agent']; 
+        const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const firstIpAddress = ipAddress.split(',')[0];
+        const deviceInfo = req.headers['user-agent'];
+        const browser = req.headers['user-agent'];
         const timing = new Date();
 
         const existingLog = await Log.findOne({ ip });
@@ -16,7 +17,7 @@ async function saveUserLogs(req, res) {
             await existingLog.save();
             res.status(200).json({ message: 'Log updated successfully' });
         } else {
-            const logEntry = new Log({ ip, deviceInfo, timing, browser });
+            const logEntry = new Log({ firstIpAddress, deviceInfo, timing, browser });
             await logEntry.save();
             res.status(201).json({ message: 'Log saved successfully' });
         }
