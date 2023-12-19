@@ -1,16 +1,15 @@
 // authRoutes.js
 const express = require("express");
-const router = express.Router();
+const router = express.Router()
+const { signup, checkLoginAuth, forgotPassword, resetPassword, activateAuthUser, getUsersData } = require("../controller/auth");
+const { getUser } = require("../middleware/authenticate");
 
 
-const { signup, checkLoginAuth, forgotPassword, resetPassword, activateAuthUser } = require("../controller/auth");
-
-
-router.post("/signup",signup);
+router.post("/signup", signup);
 
 /// login with authentication
 
-router.post("/login",checkLoginAuth);
+router.post("/login", checkLoginAuth);
 
 router.post("/forgotPassword", forgotPassword);
 
@@ -21,6 +20,8 @@ router.post("/forgotPassword", forgotPassword);
 router.post("/resetPassword", resetPassword);
 
 // API endpoint to update user status from inactive to active
-router.put("/activate/:token",activateAuthUser);
+router.put("/activate/:token", activateAuthUser);
+
+router.get("/profile",getUsersData);
 
 module.exports = router;

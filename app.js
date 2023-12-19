@@ -1,8 +1,8 @@
-const http = require("http");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
+const cookieParser = require('cookie-parser');
 const requestIp = require('request-ip');
 const app = express();
 
@@ -15,7 +15,6 @@ const logRouter = require("./routes/logRoutes.js")
 const urlRouter = require("./routes/urlshortner.js")
 
 const { PORT } = require("./config/keys");
-
 //call mongoDB
 const main = require("./models/db");
 const Log = require("./models/info.js");
@@ -25,6 +24,7 @@ main()
 
 // Middleware
 app.use(requestIp.mw());
+app.use(cookieParser());
 const corsOptions = {
   origin: "*", // Allow only this origin
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",

@@ -13,6 +13,7 @@ const {
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { sendVerificationEmail } = require("../services/sendmail");
+const { setUser, getUser } = require("../middleware/authenticate");
 const client = require("twilio")(accountSid, authToken);
 
 
@@ -73,8 +74,16 @@ async function checkLoginAuth(req, res) {
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (passwordMatch) {
-        const token = jwt.sign({ userId: user._id }, JWT_TOKEN);
-        res.json({ token, user, message: "Login successful" });
+        const token = setUser(user,JWT_TOKEN);
+        res.cookie('uuid', token, {
+          domain:'http://localhost:3000',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production', // Change to 'production' in production
+          maxAge: 60 * 60 * 1000,
+          sameSite: 'Strict',
+          path: '/',
+        });        
+        res.status(200).json({ token,message: "Login successful" });
       } else {
         res.status(401).json({ error: "Invalid credentials" });
       }
@@ -203,10 +212,42 @@ async function activateAuthUser(req, res) {
   }
 }
 
+async function getUsersData(req, res) {
+  try {
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ msg: 'Unauthorized - Token not provided' });
+    }
+
+    const authToken = token.split(' ')[1];
+
+    // Now you can use authToken in your code
+    const uid = getUser(authToken, JWT_TOKEN);
+
+    if (!uid) {
+      return res.json({ msg: 'Unauthorized accesse' });
+    }
+
+    const user = await UserData.findOne({ _id: uid }, { password: 0, otp: 0, token: 0 });
+
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+
+
 module.exports = {
   signup,
   checkLoginAuth,
   forgotPassword,
   resetPassword,
-  activateAuthUser
+  activateAuthUser,
+  getUsersData,
 }
