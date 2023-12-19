@@ -1,11 +1,14 @@
 const Log = require("../models/info");
+const express = require("express");
+const app = express();
+const requestIp = require('request-ip');
+app.use(requestIp.mw());
 
 
 async function saveUserLogs(req, res) {
 
     try {
-        const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const firstIpAddress = ipAddress.split(',')[0];
+        const clientIp = req.clientIp;
         const deviceInfo = req.headers['user-agent'];
         const browser = req.headers['user-agent'];
         const timing = new Date();
@@ -17,7 +20,7 @@ async function saveUserLogs(req, res) {
             await existingLog.save();
             res.status(200).json({ message: 'Log updated successfully' });
         } else {
-            const logEntry = new Log({ firstIpAddress, deviceInfo, timing, browser });
+            const logEntry = new Log({ clientIp, deviceInfo, timing, browser });
             await logEntry.save();
             res.status(201).json({ message: 'Log saved successfully' });
         }
