@@ -45,7 +45,6 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //call the all restful APIs
 
-
 app.use('/api/auth',authRouter);
 app.use('/api/codeblocks', codeRouter);
 app.use('/api/upload', uploadRouter);

@@ -13,7 +13,7 @@ async function saveUserLogs(req, res) {
         const browser = req.headers['user-agent'];
         const timing = new Date();
 
-        const existingLog = await Log.findOne({ ip });
+        const existingLog = await Log.findOne({ clientIp });
 
         if (existingLog) {
             existingLog.timing = timing;
