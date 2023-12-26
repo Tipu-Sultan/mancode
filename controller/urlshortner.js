@@ -4,7 +4,7 @@ require('dotenv').config();
 
 async function postUrlShortner(req, res) {
     const { originalUrl } = req.body;
-    const HOST = process.env.API_HOST || 'http://localhost:8080'
+    const HOST = process.env.API_HOST
 
     try {
         // Check if the URL already exists in the database
